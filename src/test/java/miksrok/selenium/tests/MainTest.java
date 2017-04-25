@@ -2,6 +2,7 @@ package miksrok.selenium.tests;
 
 import miksrok.selenium.BaseTest;
 import miksrok.selenium.GeneralActions;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -14,7 +15,7 @@ public class MainTest extends BaseTest {
        generalActions.openAllProductsPage();
        generalActions.openRandomProduct();
        generalActions.addProducrToChart();
-       generalActions.checkMainInformation();
+       Assert.assertTrue(generalActions.checkMainInformation());
        generalActions.creatNewOrder();
        generalActions.addAddress();
        generalActions.addDeliveryOptions();

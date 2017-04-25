@@ -109,18 +109,19 @@ public class GeneralActions  {
 
     }
 
-    public void checkMainInformation(){
+    public boolean checkMainInformation(){
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.newOrderBtn));
         WebElement controlProductName = driver.findElement(this.controlProductName);
         WebElement controlProductQty = driver.findElement(this.controlProductQty);
         WebElement controlProductPrice = driver.findElement(this.controlProductPrice);
 
-        System.out.println(controlProductName.getText().toLowerCase().equals(product.getName()));
         float pr = DataConverter.parsePriceValue(controlProductPrice.getText());
-        System.out.println(DataConverter.convertPriceValue(pr).equals(product.getPrice()));
-        System.out.println(DataConverter.parseStockValue(controlProductQty.getText()) == 1);
 
+        boolean isNameEquals = controlProductName.getText().toLowerCase().equals(product.getName());
+        boolean isPriceEquals = DataConverter.convertPriceValue(pr).equals(product.getPrice());
+        boolean isQtyEquals = DataConverter.parseStockValue(controlProductQty.getText()) == 1;
+        return isNameEquals && isPriceEquals && isQtyEquals;
     }
 
     public void creatNewOrder(){
@@ -145,7 +146,7 @@ public class GeneralActions  {
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.cartTitle));
         WebElement cartTitle = driver.findElement(this.cartTitle);
         String title = cartTitle.getText();
-        System.err.println(title.equals("Ваш заказ подтверждён"));
+        System.err.println(title.equals("?ВАШ ЗАКАЗ ПОДТВЕРЖДЁН"));
         System.err.println(title);
     }
 
