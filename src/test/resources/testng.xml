@@ -8,6 +8,25 @@
             <class name="miksrok.selenium.tests.MainTest" />
         </classes>
     </test>
-
-    <!--Configure tests for other browser types-->
+    <test name="Create New Order [Firefox]" >
+        <parameter name="browser" value="firefox" />
+        <parameter name="selenium.grid" value="http://localhost:5555/wd/hub" />
+        <classes>
+            <class name="miksrok.selenium.tests.MainTest" />
+        </classes>
+    </test>
+    <test name="Create New Order [PhantomJS]" >
+        <parameter name="browser" value="phantom" />
+        <parameter name="selenium.grid" value="http://localhost:6666/wd/hub" />
+        <classes>
+            <class name="miksrok.selenium.tests.MainTest" />
+        </classes>
+    </test>
+    <test name="Create New Order [Android]" >
+        <parameter name="browser" value="android" />
+        <parameter name="selenium.grid" value="http://localhost:7777/wd/hub" />
+        <classes>
+            <class name="miksrok.selenium.tests.MainTest" />
+        </classes>
+    </test>
 </suite>
