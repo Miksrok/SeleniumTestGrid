@@ -10,17 +10,43 @@ import org.testng.annotations.Test;
  */
 public class MainTest extends BaseTest {
 
-    @Test
-    private void open() throws InterruptedException {
-       generalActions.openAllProductsPage();
-       generalActions.openRandomProduct();
-       generalActions.addProducrToChart();
-       Assert.assertTrue(generalActions.checkMainInformation());
-       generalActions.creatNewOrder();
-       generalActions.addAddress();
-       generalActions.addDeliveryOptions();
-       generalActions.paymentConfirmation();
-       generalActions.checkTitle();
+   @Test
+    public void openAllProductsPageTest(){
+        generalActions.openAllProductsPage();
     }
 
+    @Test(dependsOnMethods = "openAllProductsPageTest")
+    public void openRandomProductPageTest(){
+        try {
+            generalActions.openRandomProduct();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test(dependsOnMethods = "openRandomProductPageTest")
+    public void addProductToChartTest(){
+        generalActions.addProducrToChart();
+        Assert.assertTrue(generalActions.isNameEquals(), "incorrect product name");
+        Assert.assertTrue(generalActions.isPriceEquals(), "incorrect product price");
+        Assert.assertTrue(generalActions.isQtyEquals(), "incorrect product quantity");
+    }
+
+    @Test(dependsOnMethods = "addProductToChartTest")
+    public void createNewOrderTest(){
+        generalActions.createNewOrder();
+        generalActions.addAddress();
+        generalActions.addDeliveryOptions();
+        generalActions.paymentConfirmation();
+    }
+
+    @Test(dependsOnMethods = "createNewOrderTest")
+    public void confirmationTest(){
+        Assert.assertTrue(generalActions.isTitleCorrect());
+    }
+
+    @Test(dependsOnMethods = "confirmationTest")
+    public void returnToProductTest(){
+        Assert.assertTrue(generalActions.returnToProduct());
+    }
 }

@@ -21,6 +21,7 @@ public class GeneralActions  {
     private WebDriverWait wait;
     private Product product;
     private User user;
+    private String randomProductUrl;
 
     private final String MAIN_PAGE= "http://prestashop-automation.qatestlab.com.ua/ru/";
     private By allProductLink = By.cssSelector(".all-product-link");
@@ -82,6 +83,8 @@ public class GeneralActions  {
         WebElement name = driver.findElement(this.productName);
         WebElement price = driver.findElement(this.productPrice);
 
+        randomProductUrl = driver.getCurrentUrl();
+        System.err.println(randomProductUrl);
         System.out.println(name.getText().toLowerCase());
         System.out.println(DataConverter.parsePriceValue(price.getText()));
 
@@ -109,22 +112,24 @@ public class GeneralActions  {
 
     }
 
-    public boolean checkMainInformation(){
-
+    public boolean isNameEquals(){
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.newOrderBtn));
         WebElement controlProductName = driver.findElement(this.controlProductName);
-        WebElement controlProductQty = driver.findElement(this.controlProductQty);
-        WebElement controlProductPrice = driver.findElement(this.controlProductPrice);
-
-        float pr = DataConverter.parsePriceValue(controlProductPrice.getText());
-
-        boolean isNameEquals = controlProductName.getText().toLowerCase().equals(product.getName());
-        boolean isPriceEquals = DataConverter.convertPriceValue(pr).equals(product.getPrice());
-        boolean isQtyEquals = DataConverter.parseStockValue(controlProductQty.getText()) == 1;
-        return isNameEquals && isPriceEquals && isQtyEquals;
+        return controlProductName.getText().toLowerCase().equals(product.getName());
     }
 
-    public void creatNewOrder(){
+    public boolean isPriceEquals(){
+        WebElement controlProductPrice = driver.findElement(this.controlProductPrice);
+        float pr = DataConverter.parsePriceValue(controlProductPrice.getText());
+        return DataConverter.convertPriceValue(pr).equals(product.getPrice());
+    }
+
+    public boolean isQtyEquals(){
+        WebElement controlProductQty = driver.findElement(this.controlProductQty);
+        return DataConverter.parseStockValue(controlProductQty.getText()) == 1;
+    }
+
+    public void createNewOrder(){
         user = User.generate();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.newOrderBtn));
@@ -139,15 +144,6 @@ public class GeneralActions  {
         email.sendKeys(user.getEmail());
         WebElement continueButton = driver.findElement(this.continueBtn);
         continueButton.click();
-    }
-
-    public void checkTitle(){
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(this.cartTitle));
-        WebElement cartTitle = driver.findElement(this.cartTitle);
-        String title = cartTitle.getText();
-        System.err.println(title.equals("?ВАШ ЗАКАЗ ПОДТВЕРЖДЁН"));
-        System.err.println(title);
     }
 
     public void addAddress(){
@@ -182,4 +178,27 @@ public class GeneralActions  {
         paymentConfirmation.click();
 
     }
+    public boolean isTitleCorrect(){
+        wait.until(ExpectedConditions.visibilityOfElementLocated(this.cartTitle));
+        WebElement cartTitle = driver.findElement(this.cartTitle);
+        String title = cartTitle.getText().substring(1);
+        System.err.println(title.equals("ВАШ ЗАКАЗ ПОДТВЕРЖДЁН"));
+        System.err.println(title);
+        return title.equals("ВАШ ЗАКАЗ ПОДТВЕРЖДЁН");
+    }
+
+    public boolean returnToProduct(){
+
+        driver.navigate().to(randomProductUrl);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(this.productInformation));
+        WebElement productInformation = driver.findElement(this.productInformation);
+        productInformation.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(this.productQty));
+        WebElement qty = driver.findElement(this.productQty);
+        int tmp = DataConverter.parseStockValue(qty.getText());
+        System.out.println(tmp);
+        System.out.println(tmp == product.getQty()-1);
+        return tmp == product.getQty()-1;
+    }
+
 }
