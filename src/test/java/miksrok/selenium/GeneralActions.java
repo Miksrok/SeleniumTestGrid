@@ -58,6 +58,9 @@ public class GeneralActions  {
     private By paymentConfirmation = By.cssSelector("#payment-confirmation div button");
 
     private By cartTitle = By.cssSelector(".card-title");
+    private By finalName = By.cssSelector(".details");
+    private By finalQty = By.xpath("//div[@class='order-line row']/div[3]/div/div[2]");
+    private By finalPrice = By.xpath("//div[@class='order-line row']/div[3]/div/div[3]");
 
 
 
@@ -72,6 +75,7 @@ public class GeneralActions  {
         WebElement allProductLink = driver.findElement(this.allProductLink);
         allProductLink.click();
     }
+
     public void openRandomProduct() throws InterruptedException {
         Thread.sleep(20000);
         List<WebElement> elements = driver.findElements(this.randomProduct);
@@ -84,32 +88,24 @@ public class GeneralActions  {
         WebElement price = driver.findElement(this.productPrice);
 
         randomProductUrl = driver.getCurrentUrl();
-        System.err.println(randomProductUrl);
-        System.out.println(name.getText().toLowerCase());
-        System.out.println(DataConverter.parsePriceValue(price.getText()));
 
         WebElement productInformation = driver.findElement(this.productInformation);
         productInformation.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.productQty));
         WebElement qty = driver.findElement(this.productQty);
 
-        System.out.println(DataConverter.parseStockValue(qty.getText()));
-
         product = new Product(name.getText().toLowerCase(),
                 DataConverter.parseStockValue(qty.getText()),
                 DataConverter.parsePriceValue(price.getText()));
-
-
     }
-    public void addProducrToChart(){
 
+    public void addProducrToChart(){
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.addToChartBtn));
         WebElement addToChertBtn = driver.findElement(this.addToChartBtn);
         addToChertBtn.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.creatNewDelivery));
         WebElement creatNewDelivery = driver.findElement(this.creatNewDelivery);
         creatNewDelivery.click();
-
     }
 
     public boolean isNameEquals(){
@@ -147,7 +143,6 @@ public class GeneralActions  {
     }
 
     public void addAddress(){
-
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.checkoutAddressesStep));
         WebElement address = driver.findElement(this.address);
         WebElement postcode = driver.findElement(this.postcode);
@@ -157,14 +152,11 @@ public class GeneralActions  {
         city.sendKeys(user.getCity());
         WebElement submitAddress = driver.findElement(this.confirmAddresses);
         submitAddress.click();
-
     }
     public void addDeliveryOptions(){
-
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.confirmDeliveryOptions));
         WebElement confirmDeliveryOptions = driver.findElement(this.confirmDeliveryOptions);
         confirmDeliveryOptions.click();
-
     }
 
     public void paymentConfirmation(){
@@ -178,13 +170,30 @@ public class GeneralActions  {
         paymentConfirmation.click();
 
     }
+
     public boolean isTitleCorrect(){
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.cartTitle));
         WebElement cartTitle = driver.findElement(this.cartTitle);
         String title = cartTitle.getText().substring(1);
-        System.err.println(title.equals("ВАШ ЗАКАЗ ПОДТВЕРЖДЁН"));
-        System.err.println(title);
         return title.equals("ВАШ ЗАКАЗ ПОДТВЕРЖДЁН");
+    }
+
+    public boolean isFinalNameEquals(){
+        wait.until(ExpectedConditions.visibilityOfElementLocated(this.finalName));
+        WebElement fName = driver.findElement(this.finalName);
+        String [] a = fName.getText().split("-");
+        return a[0].trim().equalsIgnoreCase(product.getName());
+    }
+
+    public boolean isFinalQtyEquals(){
+        WebElement fQty = driver.findElement(this.finalQty);
+        return DataConverter.parseStockValue(fQty.getText()) == 1;
+    }
+
+    public boolean isFinalPriceEquals(){
+        WebElement fPrice = driver.findElement(this.finalPrice);
+        float pr = DataConverter.parsePriceValue(fPrice.getText());
+        return DataConverter.convertPriceValue(pr).equals(product.getPrice());
     }
 
     public boolean returnToProduct(){
@@ -196,8 +205,6 @@ public class GeneralActions  {
         wait.until(ExpectedConditions.visibilityOfElementLocated(this.productQty));
         WebElement qty = driver.findElement(this.productQty);
         int tmp = DataConverter.parseStockValue(qty.getText());
-        System.out.println(tmp);
-        System.out.println(tmp == product.getQty()-1);
         return tmp == product.getQty()-1;
     }
 

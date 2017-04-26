@@ -43,6 +43,9 @@ public class MainTest extends BaseTest {
     @Test(dependsOnMethods = "createNewOrderTest")
     public void confirmationTest(){
         Assert.assertTrue(generalActions.isTitleCorrect());
+        Assert.assertTrue(generalActions.isFinalNameEquals(), "incorrect final product name");
+        Assert.assertTrue(generalActions.isFinalPriceEquals(), "incorrect final product price");
+        Assert.assertTrue(generalActions.isFinalQtyEquals(), "incorrect final product quantity");
     }
 
     @Test(dependsOnMethods = "confirmationTest")
